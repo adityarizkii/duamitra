@@ -4,6 +4,7 @@ import { FaPlus, FaMinus } from "react-icons/fa6";
 import SoldModal from "@/components/fragments/SoldModal";
 import { formatToIDR } from "@/utils";
 import AddModal from "@/components/fragments/AddModal";
+import Link from "next/link";
 
 type ProductType = {
   id: string;
@@ -20,9 +21,9 @@ const Home = () => {
   const [productOnEdit, setProductOnEdit] = useState<ProductType>();
   const [editAmount, setEditAmount] = useState<number>(1);
 
-  useEffect(() => {
-    console.log(editAmount);
-  }, [editAmount]);
+  // useEffect(() => {
+  //   console.log(editAmount);
+  // }, [editAmount]);
 
   const fetchProducts = async () => {
     const res = await fetch("http://localhost:3000/api/products");
@@ -41,6 +42,8 @@ const Home = () => {
       {/* edit modal */}
       {isOnSell && productOnEdit && (
         <SoldModal
+          products={products}
+          setProducts={setProducts}
           productOnEdit={productOnEdit}
           editAmount={editAmount}
           setEditAmount={setEditAmount}
@@ -51,6 +54,8 @@ const Home = () => {
       )}
       {isOnAdd && productOnEdit && (
         <AddModal
+          products={products}
+          setProducts={setProducts}
           productOnEdit={productOnEdit}
           editAmount={editAmount}
           setEditAmount={setEditAmount}
@@ -60,6 +65,11 @@ const Home = () => {
         />
       )}
       {/* end edit modal */}
+      <Link href="http://localhost:3000/history">
+        <button className="bg-blue-500 px-4 py-1 text-white">
+          Histori Transaksi
+        </button>
+      </Link>
       <table className="my-10 h-fit rounded-xl border border-gray-400 text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
         <thead className="text-xs uppercase text-gray-900 dark:text-gray-400">
           <tr>

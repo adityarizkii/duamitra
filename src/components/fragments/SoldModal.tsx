@@ -4,6 +4,8 @@ import { FaMinus, FaPlus } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5";
 
 const SoldModal = ({
+  products,
+  setProducts,
   productOnEdit,
   editAmount,
   setEditAmount,
@@ -11,6 +13,40 @@ const SoldModal = ({
   setIsOnAdd,
   setIsOnEdit,
 }: any) => {
+  const sellProducts = async () => {
+    const res = await fetch(
+      "http://localhost:3000/api/products/" + productOnEdit.id,
+      {
+        method: "PATCH",
+        body: JSON.stringify({
+          name: productOnEdit.name,
+          price: productOnEdit.price,
+          stock: productOnEdit.stock - editAmount,
+        }),
+      }
+    );
+
+    if (res.status === 200) {
+      setIsOnEdit(false);
+      setIsOnAdd(false);
+      setProductOnEdit(undefined);
+      setEditAmount(1);
+
+      const newProducts = products.map((product: any) => {
+        if (product.id === productOnEdit.id) {
+          return {
+            ...product,
+            stock: product.stock - editAmount,
+          };
+        }
+        return product;
+      });
+      setProducts(newProducts);
+    } else {
+      console.log(res);
+    }
+  };
+
   return (
     <div className="absolute left-0 right-0 flex h-screen flex-col items-center justify-center bg-gray-500 bg-opacity-80">
       <div className="bg-gray-800 p-10">
@@ -76,7 +112,12 @@ const SoldModal = ({
           </tbody>
         </table>
         <div className="mt-5 flex flex-row-reverse gap-4">
-          <button className="bg-blue-500 px-4 py-2 text-white">Jual</button>
+          <button
+            className="bg-blue-500 px-4 py-2 text-white"
+            onClick={sellProducts}
+          >
+            Jual
+          </button>
           <button className="bg-red-500 px-4 py-2 text-white">Batal</button>
         </div>
       </div>

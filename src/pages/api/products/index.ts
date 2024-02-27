@@ -3,7 +3,11 @@ import prisma from "@/lib/prisma";
 
 async function getMethodHandler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const data = await prisma.products.findMany();
+    const data = await prisma.products.findMany({
+      orderBy: {
+        name: "asc",
+      },
+    });
     res.status(200).json({ message: "success", data });
   } catch (err) {
     res.status(504).json({ message: "error when try to get products" });

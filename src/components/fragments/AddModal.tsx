@@ -4,6 +4,8 @@ import { FaMinus, FaPlus } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5";
 
 const AddModal = ({
+  products,
+  setProducts,
   productOnEdit,
   editAmount,
   setEditAmount,
@@ -11,6 +13,47 @@ const AddModal = ({
   setIsOnAdd,
   setIsOnEdit,
 }: any) => {
+  const addProducts = async () => {
+    const res = await fetch(
+      "http://localhost:3000/api/products/" + productOnEdit.id,
+      {
+        method: "PATCH",
+        body: JSON.stringify({
+          name: productOnEdit.name,
+          price: productOnEdit.price,
+          stock: productOnEdit.stock + editAmount,
+        }),
+      }
+    );
+
+    if (res.status === 200) {
+      setIsOnEdit(false);
+      setIsOnAdd(false);
+      setProductOnEdit(undefined);
+      setEditAmount(1);
+
+      const newProducts = products.map((product: any) => {
+        if (product.id === productOnEdit.id) {
+          return {
+            ...product,
+            stock: product.stock + editAmount,
+          };
+        }
+        return product;
+      });
+      setProducts(newProducts);
+    } else {
+      console.log(res);
+    }
+  };
+
+  const closeModal = () => {
+    setIsOnEdit(false);
+    setIsOnAdd(false);
+    setProductOnEdit(undefined);
+    setEditAmount(1);
+  };
+
   return (
     <div className="absolute left-0 right-0 flex h-screen flex-col items-center justify-center bg-gray-500 bg-opacity-80">
       <div className="bg-gray-800 p-10">
@@ -28,14 +71,7 @@ const AddModal = ({
               </th>
               <th scope="col" className="flex justify-between px-6 py-3">
                 <span>Jumlah Masuk</span>
-                <button
-                  onClick={() => {
-                    setIsOnEdit(false);
-                    setIsOnAdd(false);
-                    setProductOnEdit(undefined);
-                    setEditAmount(1);
-                  }}
-                >
+                <button onClick={closeModal}>
                   <IoClose className="h-5 w-5 text-white" />
                 </button>
               </th>
@@ -65,7 +101,6 @@ const AddModal = ({
                   </div>
                   <button
                     className="border border-white px-2 py-1 text-white disabled:bg-gray-400"
-                    disabled={editAmount >= productOnEdit.stock}
                     onClick={() => setEditAmount(editAmount + 1)}
                   >
                     <FaPlus />
@@ -76,8 +111,18 @@ const AddModal = ({
           </tbody>
         </table>
         <div className="mt-5 flex flex-row-reverse gap-4">
-          <button className="bg-blue-500 px-4 py-2 text-white">Tambah</button>
-          <button className="bg-red-500 px-4 py-2 text-white">Batal</button>
+          <button
+            className="bg-blue-500 px-4 py-2 text-white"
+            onClick={addProducts}
+          >
+            Tambah
+          </button>
+          <button
+            className="bg-red-500 px-4 py-2 text-white"
+            onClick={closeModal}
+          >
+            Batal
+          </button>
         </div>
       </div>
     </div>
