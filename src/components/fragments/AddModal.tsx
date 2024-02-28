@@ -3,6 +3,14 @@ import React from "react";
 import { FaMinus, FaPlus } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5";
 
+const productDefaultValue = {
+  id: "",
+  name: "",
+  price: 0,
+  stock: 0,
+  image: "",
+};
+
 const AddModal = ({
   products,
   setProducts,
@@ -11,46 +19,11 @@ const AddModal = ({
   setEditAmount,
   setProductOnEdit,
   setIsOnAdd,
-  setIsOnEdit,
+  addProducts,
 }: any) => {
-  const addProducts = async () => {
-    const res = await fetch(
-      "http://localhost:3000/api/products/" + productOnEdit.id,
-      {
-        method: "PATCH",
-        body: JSON.stringify({
-          name: productOnEdit.name,
-          price: productOnEdit.price,
-          stock: productOnEdit.stock + editAmount,
-        }),
-      }
-    );
-
-    if (res.status === 200) {
-      setIsOnEdit(false);
-      setIsOnAdd(false);
-      setProductOnEdit(undefined);
-      setEditAmount(1);
-
-      const newProducts = products.map((product: any) => {
-        if (product.id === productOnEdit.id) {
-          return {
-            ...product,
-            stock: product.stock + editAmount,
-          };
-        }
-        return product;
-      });
-      setProducts(newProducts);
-    } else {
-      console.log(res);
-    }
-  };
-
   const closeModal = () => {
-    setIsOnEdit(false);
     setIsOnAdd(false);
-    setProductOnEdit(undefined);
+    setProductOnEdit(productDefaultValue);
     setEditAmount(1);
   };
 

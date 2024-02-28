@@ -33,25 +33,17 @@ const HistoryPage = () => {
           </tr>
         </thead>
         <tbody>
-          {histories.map((history: any) => {
-            return (
-              <tr className="bg-white dark:bg-gray-800">
-                <th
-                  scope="row"
-                  className="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white"
-                >
-                  {history.itemName}
-                </th>
-                <td className="px-6 py-4">{history.details}</td>
-                <td
-                  className={`px-6 py-4 font-medium ${history.transactionAmount < 0 ? "text-red-500" : "text-green-500"}`}
-                >
-                  {history.transactionAmount}
-                </td>
-                <td className="px-6 py-4">{history.updater}</td>
-              </tr>
-            );
-          })}
+          <tr className="bg-white dark:bg-gray-800">
+            <th
+              scope="row"
+              className="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white"
+            >
+              tes
+            </th>
+            <td className="px-6 py-4">"details"</td>
+            <td className={`px-6 py-4 font-medium`}>10000</td>
+            <td className="px-6 py-4">admin</td>
+          </tr>
         </tbody>
       </table>
     </div>

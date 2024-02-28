@@ -3,6 +3,14 @@ import React from "react";
 import { FaMinus, FaPlus } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5";
 
+const productDefaultValue = {
+  id: "",
+  name: "",
+  price: 0,
+  stock: 0,
+  image: "",
+};
+
 const SoldModal = ({
   products,
   setProducts,
@@ -10,41 +18,13 @@ const SoldModal = ({
   editAmount,
   setEditAmount,
   setProductOnEdit,
-  setIsOnAdd,
-  setIsOnEdit,
+  setIsOnSell,
+  sellProducts,
 }: any) => {
-  const sellProducts = async () => {
-    const res = await fetch(
-      "http://localhost:3000/api/products/" + productOnEdit.id,
-      {
-        method: "PATCH",
-        body: JSON.stringify({
-          name: productOnEdit.name,
-          price: productOnEdit.price,
-          stock: productOnEdit.stock - editAmount,
-        }),
-      }
-    );
-
-    if (res.status === 200) {
-      setIsOnEdit(false);
-      setIsOnAdd(false);
-      setProductOnEdit(undefined);
-      setEditAmount(1);
-
-      const newProducts = products.map((product: any) => {
-        if (product.id === productOnEdit.id) {
-          return {
-            ...product,
-            stock: product.stock - editAmount,
-          };
-        }
-        return product;
-      });
-      setProducts(newProducts);
-    } else {
-      console.log(res);
-    }
+  const closeModal = () => {
+    setIsOnSell(false);
+    setProductOnEdit(productDefaultValue);
+    setEditAmount(1);
   };
 
   return (
@@ -64,14 +44,7 @@ const SoldModal = ({
               </th>
               <th scope="col" className="flex justify-between px-6 py-3">
                 <span>Jumlah Terjual</span>
-                <button
-                  onClick={() => {
-                    setIsOnEdit(false);
-                    setIsOnAdd(false);
-                    setProductOnEdit(undefined);
-                    setEditAmount(1);
-                  }}
-                >
+                <button onClick={closeModal}>
                   <IoClose className="h-5 w-5 text-white" />
                 </button>
               </th>

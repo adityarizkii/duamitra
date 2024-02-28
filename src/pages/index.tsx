@@ -11,23 +11,111 @@ type ProductType = {
   name: string;
   price: number;
   stock: number;
+  capitalStock: number;
   image?: string;
+};
+
+const productDefaultValue = {
+  id: "",
+  name: "",
+  price: 0,
+  stock: 0,
+  capitalStock: 0,
+  image: "",
 };
 
 const Home = () => {
   const [products, setProducts] = useState<ProductType[]>([]);
   const [isOnSell, setIsOnSell] = useState<boolean>(false);
   const [isOnAdd, setIsOnAdd] = useState<boolean>(false);
-  const [productOnEdit, setProductOnEdit] = useState<ProductType>();
+  const [productOnEdit, setProductOnEdit] =
+    useState<ProductType>(productDefaultValue);
   const [editAmount, setEditAmount] = useState<number>(1);
 
-  // useEffect(() => {
-  //   console.log(editAmount);
-  // }, [editAmount]);
+  const sellProducts = async () => {
+    const res = await fetch(
+      "http://localhost:3000/api/products/" + productOnEdit.id,
+      {
+        method: "PATCH",
+        body: JSON.stringify({
+          name: productOnEdit.name,
+          price: productOnEdit.price,
+          stock: productOnEdit.stock - editAmount,
+        }),
+      }
+    );
 
+    // handle error
+    if (res.status !== 200) return console.log(res);
+
+    // update stock on state without fetching
+    const newProducts = products.map((product: any) => {
+      if (product.id === productOnEdit.id) {
+        return {
+          ...product,
+          stock: product.stock - editAmount,
+        };
+      }
+      return product;
+    });
+    setProducts(newProducts);
+
+    // update history
+    const historyRes = await fetch("http://localhost:3000/api/history", {
+      method: "POST",
+      body: JSON.stringify({
+        name: productOnEdit.name,
+        price: productOnEdit.price,
+        soldQty: editAmount,
+      }),
+    });
+    const historyResponse = await historyRes.json();
+    console.log(historyResponse);
+
+    // close modal
+    setIsOnSell(false);
+    setIsOnAdd(false);
+    setProductOnEdit(productDefaultValue);
+    setEditAmount(1);
+  };
+
+  const addProducts = async () => {
+    const res = await fetch(
+      "http://localhost:3000/api/products/" + productOnEdit.id,
+      {
+        method: "PATCH",
+        body: JSON.stringify({
+          name: productOnEdit.name,
+          price: productOnEdit.price,
+          stock: productOnEdit.stock + editAmount,
+        }),
+      }
+    );
+
+    if (res.status === 200) {
+      setIsOnAdd(false);
+      setIsOnAdd(false);
+      setProductOnEdit(productDefaultValue);
+      setEditAmount(1);
+
+      const newProducts = products.map((product: any) => {
+        if (product.id === productOnEdit.id) {
+          return {
+            ...product,
+            stock: product.stock + editAmount,
+          };
+        }
+        return product;
+      });
+      setProducts(newProducts);
+    } else {
+      console.log(res);
+    }
+  };
   const fetchProducts = async () => {
     const res = await fetch("http://localhost:3000/api/products");
     const response = await res.json();
+
     setProducts(response.data);
   };
 
@@ -49,7 +137,8 @@ const Home = () => {
           setEditAmount={setEditAmount}
           setProductOnEdit={setProductOnEdit}
           setIsOnAdd={setIsOnAdd}
-          setIsOnEdit={setIsOnSell}
+          setIsOnSell={setIsOnSell}
+          sellProducts={sellProducts}
         />
       )}
       {isOnAdd && productOnEdit && (
@@ -61,7 +150,8 @@ const Home = () => {
           setEditAmount={setEditAmount}
           setProductOnEdit={setProductOnEdit}
           setIsOnAdd={setIsOnAdd}
-          setIsOnEdit={setIsOnSell}
+          setIsOnSell={setIsOnSell}
+          addProducts={addProducts}
         />
       )}
       {/* end edit modal */}
@@ -78,6 +168,9 @@ const Home = () => {
             </th>
             <th scope="col" className="px-6 py-3">
               Harga
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Stok Awal
             </th>
             <th scope="col" className="px-6 py-3">
               Stok
@@ -100,6 +193,7 @@ const Home = () => {
                 {product.name}
               </th>
               <td className="px-6 py-4">{formatToIDR(product.price)}</td>
+              <td className="px-6 py-4">{product.capitalStock}</td>
               <td className="px-6 py-4">{product.stock}</td>
               <td className="px-6 py-4">
                 {formatToIDR(product.price * product.stock)}

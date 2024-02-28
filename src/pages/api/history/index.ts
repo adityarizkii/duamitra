@@ -12,6 +12,8 @@ const getMethodHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 };
 
 const postMethodHandler = async (req: NextApiRequest, res: NextApiResponse) => {
+  console.log(req.body);
+
   try {
     await prisma.history.create({
       data: {

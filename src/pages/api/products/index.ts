@@ -8,6 +8,8 @@ async function getMethodHandler(req: NextApiRequest, res: NextApiResponse) {
         name: "asc",
       },
     });
+    // console.log(data);
+
     res.status(200).json({ message: "success", data });
   } catch (err) {
     res.status(504).json({ message: "error when try to get products" });

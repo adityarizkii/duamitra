@@ -12,13 +12,17 @@ datasource db {
 }
 
 model Products {
-  id          String  @id @default(cuid())
-  name        String
-  price       Int
-  stock       Int
-  image       String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id            String  @id @default(cuid())
+  name          String
+  capitalPrice  Int
+  price         Int
+  stock         Int
+  capitalStock  Int
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  histories History[]
 }
 
 model Users {
@@ -27,21 +31,27 @@ model Users {
   password    String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  histories History[]
 }
 
 model History {
   id String @id @default(cuid())
-  updater String
-  itemName String
-  details String
-  transactionAmount Int
+  qty Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  productId String
+  product Products @relation(fields: [productId], references: [id]) 
+
+  userId String
+  user Users @relation(fields: [userId], references: [id])
 }
 
 model Balance {
   id String @id @default(cuid())
-  balance Int
+  capitalBalance Int
+  profitBalance Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
