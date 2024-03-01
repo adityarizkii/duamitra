@@ -12,7 +12,7 @@ datasource db {
 }
 
 model Products {
-  id            String  @id @default(cuid())
+  id            String  @id @default(uuid())
   name          String
   capitalPrice  Int
   price         Int
@@ -26,7 +26,7 @@ model Products {
 }
 
 model Users {
-  id          String  @id @default(cuid())
+  id          String  @id @default(uuid())
   username    String
   password    String
   createdAt   DateTime  @default(now())
@@ -36,8 +36,9 @@ model Users {
 }
 
 model History {
-  id String @id @default(cuid())
+  id String @id @default(uuid())
   qty Int
+  price Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -49,7 +50,7 @@ model History {
 }
 
 model Balance {
-  id String @id @default(cuid())
+  id String @id @default(uuid())
   capitalBalance Int
   profitBalance Int
   createdAt DateTime @default(now())

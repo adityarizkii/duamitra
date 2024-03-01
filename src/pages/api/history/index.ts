@@ -3,8 +3,17 @@ import prisma from "@/lib/prisma";
 
 const getMethodHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const data = await prisma.history.findMany();
-    // console.log(data);
+    const data = await prisma.history.findMany({
+      include: {
+        product: true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+      },
+    });
     return res.status(200).json({ message: "success", data });
   } catch (err) {
     return res.status(500).json({ message: "error when try to get data" });
@@ -12,15 +21,16 @@ const getMethodHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 };
 
 const postMethodHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-  console.log(req.body);
+  const reqBody: any = JSON.parse(req.body);
+  console.log(reqBody);
 
   try {
     await prisma.history.create({
       data: {
-        itemName: "test",
-        details: "test",
-        updater: "admin",
-        transactionAmount: -1000000,
+        qty: reqBody.qty,
+        productId: reqBody.productId,
+        userId: reqBody.userId,
+        price: reqBody.price,
       },
     });
     res.status(200).json({ message: "success create history" });

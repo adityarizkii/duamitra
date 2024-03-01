@@ -27,8 +27,6 @@ const patchMethodHanlder = async (
         id: req.query.id as string,
       },
       data: {
-        name: reqBody.name,
-        price: reqBody.price,
         stock: reqBody.stock,
       },
     });

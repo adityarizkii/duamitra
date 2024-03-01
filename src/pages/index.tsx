@@ -9,6 +9,7 @@ import Link from "next/link";
 type ProductType = {
   id: string;
   name: string;
+  capitalPrice: number;
   price: number;
   stock: number;
   capitalStock: number;
@@ -18,6 +19,7 @@ type ProductType = {
 const productDefaultValue = {
   id: "",
   name: "",
+  capitalPrice: 0,
   price: 0,
   stock: 0,
   capitalStock: 0,
@@ -33,20 +35,18 @@ const Home = () => {
   const [editAmount, setEditAmount] = useState<number>(1);
 
   const sellProducts = async () => {
-    const res = await fetch(
+    const productsRes = await fetch(
       "http://localhost:3000/api/products/" + productOnEdit.id,
       {
         method: "PATCH",
         body: JSON.stringify({
-          name: productOnEdit.name,
-          price: productOnEdit.price,
           stock: productOnEdit.stock - editAmount,
         }),
       }
     );
 
     // handle error
-    if (res.status !== 200) return console.log(res);
+    if (productsRes.status !== 200) return console.log(productsRes);
 
     // update stock on state without fetching
     const newProducts = products.map((product: any) => {
@@ -64,13 +64,26 @@ const Home = () => {
     const historyRes = await fetch("http://localhost:3000/api/history", {
       method: "POST",
       body: JSON.stringify({
-        name: productOnEdit.name,
-        price: productOnEdit.price,
-        soldQty: editAmount,
+        qty: editAmount,
+        price: productOnEdit.price, //custom price
+        productId: productOnEdit.id,
+        userId: "clt6c57m500008u4w0019dedd",
       }),
     });
     const historyResponse = await historyRes.json();
     console.log(historyResponse);
+
+    // update balance
+    const balanceRes = await fetch("http://localhost:3000/api/balance", {
+      method: "PATCH",
+      body: JSON.stringify({
+        capitalBalance: productOnEdit.capitalPrice * editAmount,
+        profitBalance:
+          (productOnEdit.price - productOnEdit.capitalPrice) * editAmount,
+      }),
+    });
+    const balanceResponse = await balanceRes.json();
+    console.log(balanceResponse);
 
     // close modal
     setIsOnSell(false);
@@ -125,7 +138,7 @@ const Home = () => {
 
   return (
     <div
-      className={`relative flex ${isOnSell || isOnAdd ? "max-h-screen overflow-hidden" : "min-h-screen"} flex-col items-center bg-black`}
+      className={`relative flex min-h-screen ${isOnSell || isOnAdd ? "overflow-hidden" : ""} flex-col items-center bg-black`}
     >
       {/* edit modal */}
       {isOnSell && productOnEdit && (
@@ -155,28 +168,26 @@ const Home = () => {
         />
       )}
       {/* end edit modal */}
-      <Link href="http://localhost:3000/history">
-        <button className="bg-blue-500 px-4 py-1 text-white">
-          Histori Transaksi
-        </button>
-      </Link>
-      <table className="my-10 h-fit rounded-xl border border-gray-400 text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
+      <table className="mb-5 mt-10 h-fit rounded-xl border border-gray-400 text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
         <thead className="text-xs uppercase text-gray-900 dark:text-gray-400">
           <tr>
             <th scope="col" className="px-6 py-3">
               Nama Barang
             </th>
             <th scope="col" className="px-6 py-3">
-              Harga
-            </th>
-            <th scope="col" className="px-6 py-3">
               Stok Awal
             </th>
             <th scope="col" className="px-6 py-3">
-              Stok
+              Stok Tersisa
             </th>
             <th scope="col" className="px-6 py-3">
-              Harga Total
+              Harga Beli
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Harga Jual
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Harga Total Barang
             </th>
             <th scope="col" className="px-6 py-3">
               Edit
@@ -192,9 +203,10 @@ const Home = () => {
               >
                 {product.name}
               </th>
-              <td className="px-6 py-4">{formatToIDR(product.price)}</td>
               <td className="px-6 py-4">{product.capitalStock}</td>
               <td className="px-6 py-4">{product.stock}</td>
+              <td className="px-6 py-4">{formatToIDR(product.capitalPrice)}</td>
+              <td className="px-6 py-4">{formatToIDR(product.price)}</td>
               <td className="px-6 py-4">
                 {formatToIDR(product.price * product.stock)}
               </td>
@@ -209,7 +221,7 @@ const Home = () => {
                   >
                     Barang Laku
                   </button>
-                  <button
+                  {/* <button
                     className="bg-blue-500 px-2 py-1 text-white"
                     onClick={() => {
                       setIsOnAdd(true);
@@ -217,13 +229,23 @@ const Home = () => {
                     }}
                   >
                     Barang Masuk
-                  </button>
+                  </button> */}
                 </div>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      <div className="flex gap-6">
+        <Link href="http://localhost:3000/history">
+          <button className="bg-gray-500 px-4 py-1 text-white">
+            Histori Transaksi
+          </button>
+        </Link>
+        <Link href="http://localhost:3000/balance">
+          <button className="bg-gray-500 px-4 py-1 text-white">Saldo</button>
+        </Link>
+      </div>
     </div>
   );
 };

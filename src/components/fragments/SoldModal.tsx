@@ -6,14 +6,14 @@ import { IoClose } from "react-icons/io5";
 const productDefaultValue = {
   id: "",
   name: "",
+  capitalPrice: 0,
   price: 0,
   stock: 0,
+  capitalStock: 0,
   image: "",
 };
 
 const SoldModal = ({
-  products,
-  setProducts,
   productOnEdit,
   editAmount,
   setEditAmount,
@@ -59,7 +59,21 @@ const SoldModal = ({
                 {productOnEdit.name}
               </th>
               <td className="px-6 py-4">{productOnEdit.stock}</td>
-              <td className="px-6 py-4">{formatToIDR(productOnEdit.price)}</td>
+              <td className="px-6 py-4">
+                <p>{formatToIDR(productOnEdit.price)}</p>
+                <input
+                  type="number"
+                  value={productOnEdit.price}
+                  onChange={(e) => {
+                    if (!isNaN(parseInt(e.target.value))) {
+                      setProductOnEdit({
+                        ...productOnEdit,
+                        price: parseInt(e.target.value),
+                      });
+                    }
+                  }}
+                />
+              </td>
               <td className="px-6 py-4">
                 <div className="flex gap-4">
                   <button
