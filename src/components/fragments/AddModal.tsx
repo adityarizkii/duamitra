@@ -12,14 +12,13 @@ const productDefaultValue = {
 };
 
 const AddModal = ({
-  products,
-  setProducts,
   productOnEdit,
   editAmount,
   setEditAmount,
   setProductOnEdit,
   setIsOnAdd,
   addProducts,
+  isLoading,
 }: any) => {
   const closeModal = () => {
     setIsOnAdd(false);
@@ -45,7 +44,7 @@ const AddModal = ({
               <th scope="col" className="flex justify-between px-6 py-3">
                 <span>Jumlah Masuk</span>
                 <button onClick={closeModal}>
-                  <IoClose className="h-5 w-5 text-white" />
+                  <IoClose className="h-5 w-5 text-white hover:text-gray-400" />
                 </button>
               </th>
             </tr>
@@ -59,7 +58,22 @@ const AddModal = ({
                 {productOnEdit.name}
               </th>
               <td className="px-6 py-4">{productOnEdit.stock}</td>
-              <td className="px-6 py-4">{formatToIDR(productOnEdit.price)}</td>
+              <td className="px-6 py-4">
+                <p>{formatToIDR(productOnEdit.capitalPrice)}</p>
+                <input
+                  type="number"
+                  className="mt-2 border bg-gray-800 px-2 py-1"
+                  value={productOnEdit.capitalPrice}
+                  onChange={(e) => {
+                    if (!isNaN(parseInt(e.target.value))) {
+                      setProductOnEdit({
+                        ...productOnEdit,
+                        capitalPrice: parseInt(e.target.value),
+                      });
+                    }
+                  }}
+                />
+              </td>
               <td className="px-6 py-4">
                 <div className="flex gap-4">
                   <button
@@ -85,13 +99,13 @@ const AddModal = ({
         </table>
         <div className="mt-5 flex flex-row-reverse gap-4">
           <button
-            className="bg-blue-500 px-4 py-2 text-white"
+            className="bg-blue-500 px-4 py-2 text-white hover:bg-blue-700"
             onClick={addProducts}
           >
             Tambah
           </button>
           <button
-            className="bg-red-500 px-4 py-2 text-white"
+            className="bg-red-500 px-4 py-2 text-white hover:bg-red-700"
             onClick={closeModal}
           >
             Batal

@@ -33,8 +33,10 @@ const Home = () => {
   const [productOnEdit, setProductOnEdit] =
     useState<ProductType>(productDefaultValue);
   const [editAmount, setEditAmount] = useState<number>(1);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const sellProducts = async () => {
+    setIsLoading(true);
     const productsRes = await fetch(
       "http://localhost:3000/api/products/" + productOnEdit.id,
       {
@@ -68,6 +70,7 @@ const Home = () => {
         price: productOnEdit.price, //custom price
         productId: productOnEdit.id,
         userId: "clt6c57m500008u4w0019dedd",
+        type: "sell",
       }),
     });
     const historyResponse = await historyRes.json();
@@ -80,6 +83,7 @@ const Home = () => {
         capitalBalance: productOnEdit.capitalPrice * editAmount,
         profitBalance:
           (productOnEdit.price - productOnEdit.capitalPrice) * editAmount,
+        type: "sell",
       }),
     });
     const balanceResponse = await balanceRes.json();
@@ -90,9 +94,12 @@ const Home = () => {
     setIsOnAdd(false);
     setProductOnEdit(productDefaultValue);
     setEditAmount(1);
+
+    setIsLoading(false);
   };
 
   const addProducts = async () => {
+    setIsLoading(true);
     const res = await fetch(
       "http://localhost:3000/api/products/" + productOnEdit.id,
       {
@@ -105,26 +112,57 @@ const Home = () => {
       }
     );
 
-    if (res.status === 200) {
-      setIsOnAdd(false);
-      setIsOnAdd(false);
-      setProductOnEdit(productDefaultValue);
-      setEditAmount(1);
+    // handle error
+    if (res.status !== 200) return console.log(res);
 
-      const newProducts = products.map((product: any) => {
-        if (product.id === productOnEdit.id) {
-          return {
-            ...product,
-            stock: product.stock + editAmount,
-          };
-        }
-        return product;
-      });
-      setProducts(newProducts);
-    } else {
-      console.log(res);
-    }
+    // update stock in product without fetching
+    const newProducts = products.map((product: any) => {
+      if (product.id === productOnEdit.id) {
+        return {
+          ...product,
+          stock: product.stock + editAmount,
+        };
+      }
+      return product;
+    });
+    setProducts(newProducts);
+
+    // update history
+    const historyRes = await fetch("http://localhost:3000/api/history", {
+      method: "POST",
+      body: JSON.stringify({
+        qty: editAmount,
+        price: productOnEdit.price, //custom price
+        productId: productOnEdit.id,
+        userId: "clt6c57m500008u4w0019dedd",
+        type: "buy",
+      }),
+    });
+    const historyResponse = await historyRes.json();
+    console.log(historyResponse);
+
+    // update balance
+    const balanceRes = await fetch("http://localhost:3000/api/balance", {
+      method: "PATCH",
+      body: JSON.stringify({
+        capitalBalance: productOnEdit.capitalPrice * editAmount,
+        profitBalance:
+          (productOnEdit.price - productOnEdit.capitalPrice) * editAmount,
+        type: "buy",
+      }),
+    });
+    const balanceResponse = await balanceRes.json();
+    console.log(balanceResponse);
+
+    // close modal
+    setIsOnAdd(false);
+    setIsOnAdd(false);
+    setProductOnEdit(productDefaultValue);
+    setEditAmount(1);
+
+    setIsLoading(false);
   };
+
   const fetchProducts = async () => {
     const res = await fetch("http://localhost:3000/api/products");
     const response = await res.json();
@@ -152,6 +190,7 @@ const Home = () => {
           setIsOnAdd={setIsOnAdd}
           setIsOnSell={setIsOnSell}
           sellProducts={sellProducts}
+          isLoading={isLoading}
         />
       )}
       {isOnAdd && productOnEdit && (
@@ -165,6 +204,7 @@ const Home = () => {
           setIsOnAdd={setIsOnAdd}
           setIsOnSell={setIsOnSell}
           addProducts={addProducts}
+          isLoading={isLoading}
         />
       )}
       {/* end edit modal */}
@@ -213,7 +253,7 @@ const Home = () => {
               <td className="px-6 py-4">
                 <div className="flex gap-4">
                   <button
-                    className="bg-green-500 px-2 py-1 text-white"
+                    className="bg-green-500 px-2 py-1 text-white hover:bg-green-700"
                     onClick={() => {
                       setIsOnSell(true);
                       setProductOnEdit(product);
@@ -221,15 +261,15 @@ const Home = () => {
                   >
                     Barang Laku
                   </button>
-                  {/* <button
-                    className="bg-blue-500 px-2 py-1 text-white"
+                  <button
+                    className="bg-blue-500 px-2 py-1 text-white hover:bg-blue-700"
                     onClick={() => {
                       setIsOnAdd(true);
                       setProductOnEdit(product);
                     }}
                   >
                     Barang Masuk
-                  </button> */}
+                  </button>
                 </div>
               </td>
             </tr>
@@ -238,12 +278,14 @@ const Home = () => {
       </table>
       <div className="flex gap-6">
         <Link href="http://localhost:3000/history">
-          <button className="bg-gray-500 px-4 py-1 text-white">
+          <button className="bg-gray-500 px-4 py-1 text-white hover:bg-gray-700">
             Histori Transaksi
           </button>
         </Link>
         <Link href="http://localhost:3000/balance">
-          <button className="bg-gray-500 px-4 py-1 text-white">Saldo</button>
+          <button className="bg-gray-500 px-4 py-1 text-white hover:bg-gray-700">
+            Saldo
+          </button>
         </Link>
       </div>
     </div>

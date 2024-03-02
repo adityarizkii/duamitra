@@ -1,7 +1,8 @@
 import { formatToIDR } from "@/utils";
-import React from "react";
+import React, { useState } from "react";
 import { FaMinus, FaPlus } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5";
+import { CgSpinner } from "react-icons/cg";
 
 const productDefaultValue = {
   id: "",
@@ -20,6 +21,7 @@ const SoldModal = ({
   setProductOnEdit,
   setIsOnSell,
   sellProducts,
+  isLoading,
 }: any) => {
   const closeModal = () => {
     setIsOnSell(false);
@@ -45,7 +47,7 @@ const SoldModal = ({
               <th scope="col" className="flex justify-between px-6 py-3">
                 <span>Jumlah Terjual</span>
                 <button onClick={closeModal}>
-                  <IoClose className="h-5 w-5 text-white" />
+                  <IoClose className="h-5 w-5 text-white hover:text-gray-400" />
                 </button>
               </th>
             </tr>
@@ -63,6 +65,7 @@ const SoldModal = ({
                 <p>{formatToIDR(productOnEdit.price)}</p>
                 <input
                   type="number"
+                  className="mt-2 border bg-gray-800 px-2 py-1"
                   value={productOnEdit.price}
                   onChange={(e) => {
                     if (!isNaN(parseInt(e.target.value))) {
@@ -100,12 +103,18 @@ const SoldModal = ({
         </table>
         <div className="mt-5 flex flex-row-reverse gap-4">
           <button
-            className="bg-blue-500 px-4 py-2 text-white"
+            className="bg-blue-500 px-4 py-2 text-white hover:bg-blue-700"
             onClick={sellProducts}
+            disabled={isLoading}
           >
-            Jual
+            {isLoading ? <CgSpinner className="animate-spin" /> : "Jual"}
           </button>
-          <button className="bg-red-500 px-4 py-2 text-white">Batal</button>
+          <button
+            className="bg-red-500 px-4 py-2 text-white hover:bg-red-700"
+            onClick={closeModal}
+          >
+            Batal
+          </button>
         </div>
       </div>
     </div>

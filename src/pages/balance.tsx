@@ -19,13 +19,15 @@ const BalancePage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black p-10 text-white">
       <Link href={"/"}>
-        <button className="bg-gray-500 px-4 py-1 text-white">Kembali</button>
+        <button className="bg-gray-500 px-4 py-1 text-white hover:bg-gray-700">
+          Kembali
+        </button>
       </Link>
-      <h1>balance</h1>
+      <h1 className="my-6 text-xl font-medium">Saldo</h1>
       <p>Saldo Modal : {formatToIDR(capitalBalance)}</p>
-      <p>Saldo Keuntungan :{formatToIDR(profitBalance)}</p>
+      <p>Saldo Keuntungan : {formatToIDR(profitBalance)}</p>
     </div>
   );
 };

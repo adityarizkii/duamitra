@@ -20,17 +20,28 @@ const patchMethodHandler = async (
   if (!existingBalance)
     return res.status(404).json({ message: "Balance not found" });
 
-  const data = await prisma.balance.update({
-    where: {
-      id: "admin",
-    },
-    data: {
-      capitalBalance: reqBody.capitalBalance + existingBalance.capitalBalance,
-      profitBalance: reqBody.profitBalance + existingBalance.profitBalance,
-    },
-  });
-
-  res.status(200).json({ message: "success update balance", data });
+  if (reqBody.type === "sell") {
+    const data = await prisma.balance.update({
+      where: {
+        id: "admin",
+      },
+      data: {
+        capitalBalance: reqBody.capitalBalance + existingBalance.capitalBalance,
+        profitBalance: reqBody.profitBalance + existingBalance.profitBalance,
+      },
+    });
+    res.status(200).json({ message: "success update balance", data });
+  } else if (reqBody.type === "buy") {
+    const data = await prisma.balance.update({
+      where: {
+        id: "admin",
+      },
+      data: {
+        capitalBalance: existingBalance.capitalBalance - reqBody.capitalBalance,
+      },
+    });
+    res.status(200).json({ message: "success update balance", data });
+  }
 };
 
 const handler = (req: NextApiRequest, res: NextApiResponse) => {

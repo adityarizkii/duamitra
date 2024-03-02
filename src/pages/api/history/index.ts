@@ -27,6 +27,7 @@ const postMethodHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     await prisma.history.create({
       data: {
+        type: reqBody.type,
         qty: reqBody.qty,
         productId: reqBody.productId,
         userId: reqBody.userId,
