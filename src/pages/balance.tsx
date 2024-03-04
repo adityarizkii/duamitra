@@ -7,7 +7,7 @@ const BalancePage = () => {
   const [capitalBalance, setCapitalBalance] = useState<number>(0);
 
   const fetchBalance = async () => {
-    const balanceRes = await fetch("http://localhost:3000/api/balance");
+    const balanceRes = await fetch("https://duamitra.vercel.app/api/balance");
     const balanceResponse = await balanceRes.json();
 
     setProfitBalance(balanceResponse.data[0].profitBalance);

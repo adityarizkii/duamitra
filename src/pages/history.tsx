@@ -8,7 +8,7 @@ const HistoryPage = () => {
 
   const fetchHistory = async () => {
     setIsLoading(true);
-    const res = await fetch("http://localhost:3000/api/history");
+    const res = await fetch("https://duamitra.vercel.app/api/history");
     const response = await res.json();
     setHistories(response.data);
     // console.log(response.data);
@@ -22,7 +22,7 @@ const HistoryPage = () => {
 
   return (
     <div className="flex min-h-screen flex-col items-center bg-black pt-7 text-white">
-      <Link href="http://localhost:3000/">
+      <Link href="https://duamitra.vercel.app/">
         <button className="bg-gray-500 px-4 py-2 text-white">Kembali</button>
       </Link>
       <table className="my-5 h-fit rounded-xl border border-gray-400 text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">

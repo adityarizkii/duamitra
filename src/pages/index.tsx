@@ -5,6 +5,7 @@ import SoldModal from "@/components/fragments/SoldModal";
 import { formatToIDR } from "@/utils";
 import AddModal from "@/components/fragments/AddModal";
 import Link from "next/link";
+import { signOut, useSession } from "next-auth/react";
 
 type ProductType = {
   id: string;
@@ -38,7 +39,7 @@ const Home = () => {
   const sellProducts = async () => {
     setIsLoading(true);
     const productsRes = await fetch(
-      "http://localhost:3000/api/products/" + productOnEdit.id,
+      "https://duamitra.vercel.app/api/products/" + productOnEdit.id,
       {
         method: "PATCH",
         body: JSON.stringify({
@@ -63,7 +64,7 @@ const Home = () => {
     setProducts(newProducts);
 
     // update history
-    const historyRes = await fetch("http://localhost:3000/api/history", {
+    const historyRes = await fetch("https://duamitra.vercel.app/api/history", {
       method: "POST",
       body: JSON.stringify({
         qty: editAmount,
@@ -77,7 +78,7 @@ const Home = () => {
     console.log(historyResponse);
 
     // update balance
-    const balanceRes = await fetch("http://localhost:3000/api/balance", {
+    const balanceRes = await fetch("https://duamitra.vercel.app/api/balance", {
       method: "PATCH",
       body: JSON.stringify({
         capitalBalance: productOnEdit.capitalPrice * editAmount,
@@ -101,7 +102,7 @@ const Home = () => {
   const addProducts = async () => {
     setIsLoading(true);
     const res = await fetch(
-      "http://localhost:3000/api/products/" + productOnEdit.id,
+      "https://duamitra.vercel.app/api/products/" + productOnEdit.id,
       {
         method: "PATCH",
         body: JSON.stringify({
@@ -128,7 +129,7 @@ const Home = () => {
     setProducts(newProducts);
 
     // update history
-    const historyRes = await fetch("http://localhost:3000/api/history", {
+    const historyRes = await fetch("https://duamitra.vercel.app/api/history", {
       method: "POST",
       body: JSON.stringify({
         qty: editAmount,
@@ -142,7 +143,7 @@ const Home = () => {
     console.log(historyResponse);
 
     // update balance
-    const balanceRes = await fetch("http://localhost:3000/api/balance", {
+    const balanceRes = await fetch("https://duamitra.vercel.app/api/balance", {
       method: "PATCH",
       body: JSON.stringify({
         capitalBalance: productOnEdit.capitalPrice * editAmount,
@@ -164,7 +165,7 @@ const Home = () => {
   };
 
   const fetchProducts = async () => {
-    const res = await fetch("http://localhost:3000/api/products");
+    const res = await fetch("https://duamitra.vercel.app/api/products");
     const response = await res.json();
 
     setProducts(response.data);
@@ -174,10 +175,49 @@ const Home = () => {
     fetchProducts();
   }, []);
 
+  const { data } = useSession();
+  const [user, setUser] = useState<any>();
+
+  useEffect(() => {
+    console.log(data);
+    if (data && data.user) {
+      setUser(data.user);
+    }
+  }, [data]);
+
   return (
     <div
-      className={`relative flex min-h-screen ${isOnSell || isOnAdd ? "overflow-hidden" : ""} flex-col items-center bg-black`}
+      className={`relative flex min-h-screen ${isOnSell || isOnAdd ? "max-h-screen overflow-hidden" : ""} flex-col items-center bg-black`}
     >
+      <div className="flex w-full justify-between px-40 py-6">
+        <div className="flex gap-6">
+          <Link href="https://duamitra.vercel.app/history">
+            <button className="bg-gray-500 px-4 py-1 text-white hover:bg-gray-700">
+              Histori Transaksi
+            </button>
+          </Link>
+          <Link href="https://duamitra.vercel.app/balance">
+            <button className="bg-gray-500 px-4 py-1 text-white hover:bg-gray-700">
+              Saldo
+            </button>
+          </Link>
+        </div>
+        {user && (
+          <div className="flex items-center gap-6">
+            <h1 className="text-lg font-semibold text-white">
+              {user.username}
+            </h1>
+            <button
+              onClick={() => {
+                signOut();
+              }}
+              className="bg-red-500 px-4 py-1 text-white hover:bg-red-700"
+            >
+              Logout
+            </button>
+          </div>
+        )}
+      </div>
       {/* edit modal */}
       {isOnSell && productOnEdit && (
         <SoldModal
@@ -208,7 +248,7 @@ const Home = () => {
         />
       )}
       {/* end edit modal */}
-      <table className="mb-5 mt-10 h-fit rounded-xl border border-gray-400 text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
+      <table className="my-4 h-fit rounded-xl border border-gray-400 text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
         <thead className="text-xs uppercase text-gray-900 dark:text-gray-400">
           <tr>
             <th scope="col" className="px-6 py-3">
@@ -276,18 +316,6 @@ const Home = () => {
           ))}
         </tbody>
       </table>
-      <div className="flex gap-6">
-        <Link href="http://localhost:3000/history">
-          <button className="bg-gray-500 px-4 py-1 text-white hover:bg-gray-700">
-            Histori Transaksi
-          </button>
-        </Link>
-        <Link href="http://localhost:3000/balance">
-          <button className="bg-gray-500 px-4 py-1 text-white hover:bg-gray-700">
-            Saldo
-          </button>
-        </Link>
-      </div>
     </div>
   );
 };
