@@ -19,6 +19,7 @@ model Products {
   stock         Int
   capitalStock  Int
   image         String?
+  source        String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
