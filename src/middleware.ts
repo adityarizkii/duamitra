@@ -9,13 +9,9 @@ export async function middleware(request: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET!,
   });
 
-  // console.log(authToken);
+  console.log(authToken);
 
-  if (
-    pathname === "https://duamitra.vercel.app/" ||
-    pathname === "https://duamitra.vercel.app/balance" ||
-    pathname === "https://duamitra.vercel.app/history"
-  ) {
+  if (pathname === "/" || pathname === "/balance" || pathname === "/history") {
     if (!authToken) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
@@ -23,9 +19,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "https://duamitra.vercel.app/",
-    "https://duamitra.vercel.app/balance",
-    "https://duamitra.vercel.app/history",
-  ],
+  matcher: ["/", "/balance", "/history"],
 };
