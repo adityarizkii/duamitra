@@ -64,7 +64,7 @@ const HistoryPage = () => {
           )}
           {histories.map(
             ({ product, type, price, qty, user, createdAt }: any) => (
-              <tr className="bg-white dark:bg-gray-800">
+              <tr className="bg-white dark:bg-gray-800" key={createdAt}>
                 <td className="px-6 py-4">{formatDate(createdAt)}</td>
                 <td className="px-6 py-4">{user.username}</td>
                 <th
