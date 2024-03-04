@@ -40,7 +40,7 @@ const LoginPage = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-black text-white">
       <div className="border border-white px-10 py-6">
-        <h1 className="text-xl font-bold">Dua Mitra</h1>
+        <h1 className="text-xl font-bold">Login</h1>
         <form onSubmit={submitHandler} className="mt-4 flex flex-col gap-2">
           <div className="flex flex-col gap-1">
             <label htmlFor="username">Username</label>
