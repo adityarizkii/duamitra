@@ -65,7 +65,7 @@ const Home = () => {
   }, [data]);
 
   const fetchUsers = async () => {
-    const res = await fetch("https://duamitra.vercel.app/api/users");
+    const res = await fetch("http://localhost:3000/api/users");
     const response = await res.json();
     return response.data;
   };
@@ -73,7 +73,7 @@ const Home = () => {
   const sellProducts = async () => {
     setIsLoading(true);
     const productsRes = await fetch(
-      "https://duamitra.vercel.app/api/products/" + productOnEdit.id,
+      "http://localhost:3000/api/products/" + productOnEdit.id,
       {
         method: "PATCH",
         body: JSON.stringify({
@@ -98,7 +98,7 @@ const Home = () => {
     setProducts(newProducts);
 
     // update history
-    const historyRes = await fetch("https://duamitra.vercel.app/api/history", {
+    const historyRes = await fetch("http://localhost:3000/api/history", {
       method: "POST",
       body: JSON.stringify({
         qty: editAmount,
@@ -112,7 +112,7 @@ const Home = () => {
     console.log(historyResponse);
 
     // update balance
-    const balanceRes = await fetch("https://duamitra.vercel.app/api/balance", {
+    const balanceRes = await fetch("http://localhost:3000/api/balance", {
       method: "PATCH",
       body: JSON.stringify({
         capitalBalance: productOnEdit.capitalPrice * editAmount,
@@ -136,7 +136,7 @@ const Home = () => {
   const addProducts = async () => {
     setIsLoading(true);
     const res = await fetch(
-      "https://duamitra.vercel.app/api/products/" + productOnEdit.id,
+      "http://localhost:3000/api/products/" + productOnEdit.id,
       {
         method: "PATCH",
         body: JSON.stringify({
@@ -163,7 +163,7 @@ const Home = () => {
     setProducts(newProducts);
 
     // update history
-    const historyRes = await fetch("https://duamitra.vercel.app/api/history", {
+    const historyRes = await fetch("http://localhost:3000/api/history", {
       method: "POST",
       body: JSON.stringify({
         qty: editAmount,
@@ -177,7 +177,7 @@ const Home = () => {
     console.log(historyResponse);
 
     // update balance
-    const balanceRes = await fetch("https://duamitra.vercel.app/api/balance", {
+    const balanceRes = await fetch("http://localhost:3000/api/balance", {
       method: "PATCH",
       body: JSON.stringify({
         capitalBalance: productOnEdit.capitalPrice * editAmount,
@@ -199,7 +199,7 @@ const Home = () => {
   };
 
   const fetchProducts = async () => {
-    const res = await fetch("https://duamitra.vercel.app/api/products");
+    const res = await fetch("http://localhost:3000/api/products");
     const response = await res.json();
 
     setProducts(response.data);
@@ -211,16 +211,16 @@ const Home = () => {
 
   return (
     <div
-      className={`relative flex min-h-screen ${isOnSell || isOnAdd ? "max-h-screen overflow-hidden" : ""} flex-col items-center bg-black`}
+      className={`relative flex min-h-screen w-fit lg:w-full ${isOnSell || isOnAdd ? "max-h-screen overflow-hidden" : ""} flex-col items-center overflow-x-scroll bg-black px-4`}
     >
       <div className="flex w-full justify-between px-40 py-6">
         <div className="flex gap-6">
-          <Link href="https://duamitra.vercel.app/history">
+          <Link href="http://localhost:3000/history">
             <button className="bg-gray-500 px-4 py-1 text-white hover:bg-gray-700">
               Histori Transaksi
             </button>
           </Link>
-          <Link href="https://duamitra.vercel.app/balance">
+          <Link href="http://localhost:3000/balance">
             <button className="bg-gray-500 px-4 py-1 text-white hover:bg-gray-700">
               Saldo
             </button>
