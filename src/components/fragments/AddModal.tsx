@@ -1,5 +1,6 @@
 import { formatToIDR } from "@/utils";
 import React from "react";
+import { CgSpinner } from "react-icons/cg";
 import { FaMinus, FaPlus } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5";
 
@@ -101,12 +102,14 @@ const AddModal = ({
           <button
             className="bg-blue-500 px-4 py-2 text-white hover:bg-blue-700"
             onClick={addProducts}
+            disabled={isLoading}
           >
-            Tambah
+            {isLoading ? <CgSpinner className="animate-spin" /> : "Beli"}
           </button>
           <button
             className="bg-red-500 px-4 py-2 text-white hover:bg-red-700"
             onClick={closeModal}
+            disabled={isLoading}
           >
             Batal
           </button>

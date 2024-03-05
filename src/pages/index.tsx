@@ -17,6 +17,14 @@ type ProductType = {
   image?: string;
 };
 
+type UserType = {
+  id: string;
+  username: string;
+  password: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 const productDefaultValue = {
   id: "",
   name: "",
@@ -35,6 +43,32 @@ const Home = () => {
     useState<ProductType>(productDefaultValue);
   const [editAmount, setEditAmount] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { data }: any = useSession();
+  const [user, setUser] = useState<UserType>(); //data user {}
+
+  useEffect(() => {
+    // console.log(data);
+    if (data && data.user) {
+      const username = data.user.username;
+
+      // fetch all user
+      const users = fetchUsers();
+      users.then((usersArray: []) => {
+        const filteredUser = usersArray.find(
+          (user: any) => user.username === username
+        );
+        // console.log(filteredUser);
+
+        setUser(filteredUser);
+      });
+    }
+  }, [data]);
+
+  const fetchUsers = async () => {
+    const res = await fetch("https://duamitra.vercel.app/api/users");
+    const response = await res.json();
+    return response.data;
+  };
 
   const sellProducts = async () => {
     setIsLoading(true);
@@ -70,7 +104,7 @@ const Home = () => {
         qty: editAmount,
         price: productOnEdit.price, //custom price
         productId: productOnEdit.id,
-        userId: "clt6c57m500008u4w0019dedd",
+        userId: user?.id,
         type: "sell",
       }),
     });
@@ -135,7 +169,7 @@ const Home = () => {
         qty: editAmount,
         price: productOnEdit.price, //custom price
         productId: productOnEdit.id,
-        userId: "clt6c57m500008u4w0019dedd",
+        userId: user?.id,
         type: "buy",
       }),
     });
@@ -174,16 +208,6 @@ const Home = () => {
   useEffect(() => {
     fetchProducts();
   }, []);
-
-  const { data } = useSession();
-  const [user, setUser] = useState<any>();
-
-  useEffect(() => {
-    console.log(data);
-    if (data && data.user) {
-      setUser(data.user);
-    }
-  }, [data]);
 
   return (
     <div
