@@ -32,8 +32,8 @@ const SoldModal = ({
   return (
     <div className="absolute left-0 right-0 flex h-screen flex-col items-center justify-center bg-gray-500 bg-opacity-80">
       <div className="bg-gray-800 p-10">
-        <table className="h-fit rounded-xl border border-gray-400 text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
-          <thead className="bg-gray-800 text-xs uppercase text-gray-900 dark:text-gray-400">
+        <table className="h-fit rounded-xl border border-gray-400 text-left text-sm text-gray-400 rtl:text-right">
+          <thead className="bg-gray-800 text-xs uppercase text-gray-400">
             <tr>
               <th scope="col" className="px-6 py-3">
                 Nama Barang
@@ -53,10 +53,10 @@ const SoldModal = ({
             </tr>
           </thead>
           <tbody>
-            <tr className="bg-white dark:bg-gray-800">
+            <tr className="bg-gray-800">
               <th
                 scope="row"
-                className="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white"
+                className="whitespace-nowrap px-6 py-4 font-medium text-white"
               >
                 {productOnEdit.name}
               </th>
