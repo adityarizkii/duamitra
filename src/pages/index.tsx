@@ -198,6 +198,14 @@ const Home = () => {
     setIsLoading(false);
   };
 
+  const getAllProductPrice = (products: ProductType[]) => {
+    let total = 0;
+    products.forEach((product: ProductType) => {
+      total += product.capitalPrice * product.stock;
+    });
+    return total;
+  };
+
   const fetchProducts = async () => {
     const res = await fetch("https://duamitra.vercel.app/api/products");
     const response = await res.json();
@@ -211,7 +219,7 @@ const Home = () => {
 
   return (
     <div
-      className={`relative flex min-h-screen w-fit lg:w-full ${isOnSell || isOnAdd ? "max-h-screen overflow-hidden" : ""} flex-col items-center overflow-x-scroll bg-black px-4`}
+      className={`relative flex min-h-screen w-fit lg:w-full ${isOnSell || isOnAdd ? "max-h-screen overflow-hidden" : ""} flex-col items-center bg-black px-4`}
     >
       <div className="flex w-full justify-between px-40 py-6">
         <div className="flex gap-6">
@@ -312,7 +320,7 @@ const Home = () => {
               <td className="px-6 py-4">{formatToIDR(product.capitalPrice)}</td>
               <td className="px-6 py-4">{formatToIDR(product.price)}</td>
               <td className="px-6 py-4">
-                {formatToIDR(product.price * product.stock)}
+                {formatToIDR(product.capitalPrice * product.stock)}
               </td>
               <td className="px-6 py-4">
                 <div className="flex gap-4">
@@ -338,6 +346,17 @@ const Home = () => {
               </td>
             </tr>
           ))}
+          <tr className="bg-gray-800">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td className="px-6 py-4">
+              {formatToIDR(getAllProductPrice(products))}
+            </td>
+            <td></td>
+          </tr>
         </tbody>
       </table>
     </div>
